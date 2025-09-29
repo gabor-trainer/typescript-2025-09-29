@@ -8,6 +8,7 @@
 ### 1. Objective(s)
 
 By the end of this lab, you will be able to:
+*   Enable source map generation in `tsconfig.json`.
 *   Generate a `launch.json` file to configure the VS Code debugger for a Node.js application.
 *   Correctly configure the debugger to execute compiled TypeScript and use source maps.
 *   Set and hit a breakpoint in your TypeScript source code.
@@ -24,30 +25,42 @@ In this lab, we will configure VS Code to debug our simple "Hello, TypeScript!" 
 
 *   Completion of the "Lab: Setting Up the Development Environment".
 *   You must have the `vscode-ext-logic` project open in VS Code.
-*   The project must have been successfully compiled at least once (`npx tsc`), creating the `dist` directory.
 
 ### 4. Steps
 
 _**Note:** In this section, you will be provided with only the code fragments that need to be added or modified. The complete, final code for each file is available in the "Solution" section._
 
-1.  **Open the Run and Debug View**
+1.  **Enable Source Maps in `tsconfig.json`**
+    The debugger relies on "source maps" (`.map` files) to connect the compiled JavaScript in the `dist` folder back to your original TypeScript source code in the `src` folder. We must enable this feature in our compiler configuration.
+
+    Modify the `compilerOptions` in your `tsconfig.json` file to add the `sourceMap` property:
+    ```json
+    // tsconfig.json
+    {
+      "compilerOptions": {
+        // ... existing options
+        "strict": true,
+        "sourceMap": true // <-- ADD THIS LINE
+      },
+      "include": ["src"]
+    }
+    ```
+
+2.  **Open the Run and Debug View**
     The central location for managing debugging in VS Code is the "Run and Debug" view.
 
     *   In the VS Code Activity Bar on the left, click the icon that looks like a play button with a bug on it (or press `Ctrl+Shift+D`).
     *   You will see a view with a "Run and Debug" button and a link to "create a launch.json file".
 
-2.  **Generate the `launch.json` File**
+3.  **Generate the `launch.json` File**
     VS Code uses a `launch.json` file to store debugging configurations. We will let the editor generate a template for us.
 
     *   Click the link **"create a launch.json file"**.
     *   A dropdown will appear at the top of the editor. Select **"Node.js"** from the list of environments.
     *   VS Code will create a `.vscode` directory in your project and a `launch.json` file inside it with a default Node.js configuration.
 
-3.  **Configure `launch.json` for TypeScript**
-    The default template needs two small but critical modifications to work correctly with a compiled TypeScript project.
-
-    1.  **Point to the Compiled Code:** The debugger must run the JavaScript output, not the TypeScript source.
-    2.  **Enable Source Maps:** We need to tell the debugger where to find the compiled files so it can map execution back to our original `.ts` files.
+4.  **Configure `launch.json` for TypeScript**
+    The default template is designed for single, simple files. We must configure it to explicitly run our project's compiled entry point.
 
     Modify the generated `.vscode/launch.json` file as follows:
     ```json
@@ -63,20 +76,24 @@ _**Note:** In this section, you will be provided with only the code fragments th
       ]
     }
     ```
-    *Insight:* The `${workspaceFolder}` is a VS Code variable that points to the root of your project folder. The `outFiles` glob pattern tells the debugger to look in the `dist` directory for the JavaScript files that correspond to your source code.
+    *Insight:* By specifying the exact `program`, we create a reliable configuration that doesn't depend on which file is currently open in the editor. This is the professional standard for multi-file projects.
 
-4.  **Set a Breakpoint**
-    A breakpoint is a signal to the debugger to pause execution at a specific line of code.
+5.  **Set a Breakpoint and Compile**
+    Before we debug, we must set a breakpoint and ensure our compiled code is up-to-date.
 
     *   Open the `src/index.ts` file.
-    *   In the editor gutter to the left of the line numbers, click next to the `console.log(msg);` line. A red dot will appear. This is an active breakpoint.
+    *   In the editor gutter to the left of the line numbers, click next to the `console.log(msg);` line. A red dot will appear.
+    *   **Crucially, re-compile your project** to ensure the `dist` directory and its source maps are current. Run this in your terminal:
+        ```bash
+        npx tsc
+        ```
 
-5.  **Start the Debug Session**
-    With the configuration and breakpoint in place, you are ready to start debugging.
+6.  **Start the Debug Session**
+    With the configuration, breakpoint, and fresh compiled code in place, you are ready to start debugging.
 
     *   Ensure the "Run and Debug" view is open (`Ctrl+Shift+D`).
     *   Click the green play button at the top of the sidebar, or simply press **F5**.
-    *   The debugger will start, compile your code (if needed), and run the application. Execution will pause on the line where you set the breakpoint, and the line will be highlighted.
+    *   The debugger will start and run your application. Execution will pause on the line where you set the breakpoint, and the line will be highlighted.
 
 ### 5. Verification
 1.  **Execution Pauses:** The program execution stops at the `console.log(msg);` line in `src/index.ts`.
@@ -103,9 +120,9 @@ When execution is paused, the debug toolbar provides full control over the progr
 
 ### 8. Questions
 1.  In `launch.json`, why do we set the `program` property to point to `dist/index.js` and not `src/index.ts`?
-2.  What is the specific role of the `outFiles` property in the debugging process? What would happen if it were omitted?
+2.  What is the specific role of the `sourceMap` option in `tsconfig.json` in the debugging process?
 3.  You are paused on the line `showGreeting(greeting);`. What is the functional difference between pressing F10 (Step Over) and F11 (Step Into)?
-4.  If you set a breakpoint and it appears as an unfilled gray circle instead of a solid red dot, what is the most likely cause?
+4.  If you set a breakpoint and it appears as an unfilled gray circle instead of a solid red dot, what are the two most likely causes?
 5.  How does debugging this standalone Node.js application provide value when your ultimate goal is to build a VS Code extension?
 
 ---
@@ -113,6 +130,20 @@ When execution is paused, the debug toolbar provides full control over the progr
 ### 9. Solution
 
 #### 9.1. Final Code Artifacts
+**`tsconfig.json`**
+```json
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "sourceMap": true
+  },
+  "include": ["src"]
+}```
+
 **`.vscode/launch.json`**
 ```json
 {
@@ -138,26 +169,31 @@ When execution is paused, the debug toolbar provides full control over the progr
 ```
 
 #### 9.2. Command Summary
-The primary action in this lab is performed through the VS Code UI or by pressing a key:
-```
-Press F5 to start debugging
+```bash
+# Ensure project is compiled with source maps before debugging
+npx tsc
+
+# Start debugging
+Press F5 in VS Code
 ```
 
 ### 10. Answers
 
 #### 10.1. Answers to Questions
 1.  **Why `program` points to `dist/index.js`?**
-    The Node.js runtime cannot execute TypeScript directly; it can only execute JavaScript. The `program` property tells the debugger which file to pass to the Node.js executable to start the application. We must point it to the compiled JavaScript output in the `dist` directory. The debugger then uses source maps to relate this running code back to our source TypeScript files.
+    The Node.js runtime cannot execute TypeScript directly; it can only execute JavaScript. The `program` property tells the debugger which file to pass to the Node.js executable to start the application. We must point it to the compiled JavaScript output in the `dist` directory.
 
-2.  **What is the role of `outFiles`?**
-    The `outFiles` property is a glob pattern that tells the VS Code debugger where to find the compiled JavaScript files and their corresponding source map (`.js.map`) files. This is how the debugger knows that `src/index.ts` maps to `dist/index.js`. If this property were omitted, the debugger might not be able to resolve breakpoints set in `.ts` files, and stepping through code would likely jump you into the compiled `.js` files in `dist`, which is not a useful experience.
+2.  **What is the role of `sourceMap`?**
+    The `"sourceMap": true` option in `tsconfig.json` instructs the TypeScript compiler to generate `.js.map` files alongside the `.js` files. These map files contain data that creates a link between each line of the compiled JavaScript and the corresponding line in the original TypeScript source. The VS Code debugger uses these maps, guided by the `outFiles` property in `launch.json`, to allow you to set breakpoints and step through your `.ts` files while it executes the `.js` files. Without source maps, the debugger would not know how to make this connection.
 
 3.  **Step Over (F10) vs. Step Into (F11) on `showGreeting(greeting);`?**
-    *   **Step Over (F10):** The debugger would execute the entire `showGreeting` function in one go and pause on the next line *after* the function call in `index.ts` (which is the end of the file, so the program would terminate).
+    *   **Step Over (F10):** The debugger would execute the entire `showGreeting` function in one go and pause on the next line *after* the function call in `index.ts`.
     *   **Step Into (F11):** The debugger would jump to the first line *inside* the `showGreeting` function, which is `console.log(msg);`, allowing you to debug the function's internal logic.
 
 4.  **Unfilled gray breakpoint?**
-    An unfilled gray circle means that the debugger could not map the breakpoint from the source file to a location in the compiled code. The most common cause is that the compiled code in the `dist` directory is out of sync with the source code in the `src` directory. This usually happens if you've made changes to a `.ts` file but haven't re-run the compiler (`npx tsc`) to update the output files.
+    The two most likely causes are:
+    1.  **Missing or Incorrect Source Maps:** The `sourceMap` option in `tsconfig.json` is set to `false` or is missing, so no `.map` files were generated.
+    2.  **Stale Compiled Code:** You have made changes to your `.ts` source file but have not re-compiled the project with `npx tsc`. The existing `.map` files in the `dist` directory are now out of sync with your source code.
 
 5.  **Why debug a standalone app for an extension?**
-    This workflow provides a rapid and isolated development loop. A full VS Code extension runs in a complex host environment with many APIs. By writing your core business logic as a pure, framework-agnostic Node.js module, you can debug and perfect it in a very simple, fast, and predictable environment, as shown in this lab. This allows you to confirm your algorithms and data structures are correct without the overhead of reloading the entire VS Code development window for every change.
+    This workflow provides a rapid and isolated development loop. A full VS Code extension runs in a complex host environment. By writing your core business logic as a pure Node.js module, you can debug and perfect it in a simple, fast, and predictable environment, as shown in this lab. This allows you to confirm your algorithms and data structures are correct without the overhead of reloading the entire VS Code development window for every change.
