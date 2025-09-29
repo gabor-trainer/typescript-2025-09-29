@@ -67,7 +67,7 @@ build/
 # =================================
 # Visual Studio Code
 # We ignore the entire directory by default...
-.vscode/
+.vscode/*
 # ...but we explicitly make exceptions for files that ensure a consistent team environment.
 # settings.json standardizes editor behavior (like format on save).
 # launch.json standardizes debugging configurations.
