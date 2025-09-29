@@ -11,7 +11,7 @@ By the end of this lab, you will be able to:
 *   Install and manage Node.js using a version manager.
 *   Initialize a new project with Git version control and NPM.
 *   Install TypeScript and configure the compiler for a Node.js project.
-*   Install and configure Visual Studio Code with essential extensions for linting and formatting.
+*   Install and configure Visual Studio Code with essential extensions for linting and formatting using the modern ESLint "Flat Config" system.
 *   Create and verify a "Hello, TypeScript" project that is automatically linted and formatted.
 
 ### 2. Scenario
@@ -73,8 +73,7 @@ _**Note:** In this section, you will be provided with only the code fragments th
         # Initialize Git and NPM
         git init
         npm init -y
-        ```
-    **Verification:** `git --version` should display the installed version. The `vscode-ext-logic` folder should contain a `.git` directory and a `package.json` file.
+        ```    **Verification:** `git --version` should display the installed version. The `vscode-ext-logic` folder should contain a `.git` directory and a `package.json` file.
 
 3.  **Install TypeScript**
     We will install the TypeScript compiler globally so the `tsc` command is available system-wide.
@@ -103,7 +102,7 @@ _**Note:** In this section, you will be provided with only the code fragments th
     *Insight:* This configuration tells VS Code to automatically format your code using Prettier every time you save a file, ensuring consistency with zero effort.
 
 5.  **Configure Project Tooling**
-    Now we will add project-specific configurations for TypeScript, ESLint, and Prettier.
+    Now we will add project-specific configurations for TypeScript, ESLint, and Prettier using modern standards.
 
     *   **TypeScript (`tsconfig.json`):** Create this file in the project root.
         ```json
@@ -115,38 +114,47 @@ _**Note:** In this section, you will be provided with only the code fragments th
             "rootDir": "./src",
             "outDir": "./dist",
             "strict": true
-          }
+          },
+          "include": ["src"]
         }
         ```
-    *   **ESLint (`.eslintrc.json`):** Run the ESLint initialization wizard.
+        *Insight:* We've added `"include": ["src"]`. This explicitly tells TypeScript where to find our source files, which resolves a common warning.
+
+    *   **ESLint (`eslint.config.mjs`):** Run the ESLint initialization wizard in your terminal.
         ```bash
         npm init @eslint/config
         ```
-        Answer the prompts as follows:
-        1.  `To check syntax, find problems, and enforce code style`
-        2.  `JavaScript modules (import/export)`
-        3.  `None of these`
-        4.  `Yes` (for TypeScript)
-        5.  `Node` (spacebar to select, deselect Browser if needed)
-        6.  `Use a popular style guide` -> `Standard`
-        7.  `JSON`
-        8.  `Yes` to install dependencies.
+        Answer the prompts precisely as follows:
+        1.  *What do you want to lint?* -> Select `javascript`
+        2.  *How would you like to use ESLint?* -> Select `To check syntax and find problems`
+        3.  *What type of modules does your project use?* -> Select `JavaScript modules (import/export)`
+        4.  *Which framework does your project use?* -> Select `None of these`
+        5.  *Does your project use TypeScript?* -> Select `Yes`
+        6.  *Where does your code run?* -> Select `Node` (deselect `Browser`)
+        7.  *Which language do you want your configuration file be written in?* -> Select `JavaScript`
+        8.  *Would you like to install them now?* -> Select `Yes`
+        9.  *Which package manager do you want to use?* -> Select `npm`
 
-        After the wizard completes, install the Prettier config and update your `.eslintrc.json`:
+        *Insight:* The wizard now generates `eslint.config.mjs`, which is ESLint's new "Flat Config" format.
+
+        After the wizard completes, install the Prettier config and update the generated `eslint.config.mjs` file:
         ```bash
         npm install --save-dev eslint-config-prettier
         ```
-        Modify the `"extends"` array in `.eslintrc.json` to add `"prettier"` at the end.
-        ```json
-        // .eslintrc.json
-        {
-            // ... other settings from wizard
-            "extends": [
-                "standard-with-typescript",
-                "prettier" // MUST BE LAST
-            ],
-            // ...
-        }
+        Modify the `eslint.config.mjs` file to import and add the Prettier configuration. It must be the **last** element in the exported array.
+        ```javascript
+        // eslint.config.mjs
+        import globals from "globals";
+        import pluginJs from "@eslint/js";
+        import tseslint from "typescript-eslint";
+        import eslintConfigPrettier from "eslint-config-prettier"; // <-- 1. IMPORT
+
+        export default [
+          { languageOptions: { globals: globals.node } },
+          pluginJs.configs.recommended,
+          ...tseslint.configs.recommended,
+          eslintConfigPrettier, // <-- 2. ADD AS THE LAST ELEMENT
+        ];
         ```
     *   **Prettier (`.prettierrc.json`):** Create this file in the project root to ensure consistent formatting rules.
         ```json
@@ -204,9 +212,9 @@ The integration with VS Code automates this process, providing immediate feedbac
 ### 7. Questions
 1.  Why is using a version manager like `nvm` recommended over installing Node.js directly?
 2.  What is the fundamental difference between the roles of ESLint and Prettier in this setup?
-3.  What would happen if `"prettier"` was not the last entry in the `extends` array in `.eslintrc.json`?
+3.  What would happen if `eslintConfigPrettier` was not the last entry in the exported array in `eslint.config.mjs`?
 4.  What is the purpose of the `.vscode/settings.json` file? Why is it useful in a team environment?
-5.  We installed TypeScript globally (`npm install -g`), but the ESLint wizard added it as a project `devDependency`. Why might having both be a good practice?
+5.  We installed TypeScript globally (`npm install -g`), but the ESLint wizard added it as a project `devDependency`. Why is having a project-specific version crucial?
 
 ---
 
@@ -230,7 +238,8 @@ The integration with VS Code automates this process, providing immediate feedbac
 }
 ```
 
-**`tsconfig.json`**```json
+**`tsconfig.json`**
+```json
 {
   "compilerOptions": {
     "target": "es2022",
@@ -238,31 +247,27 @@ The integration with VS Code automates this process, providing immediate feedbac
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": true
-  }
+  },
+  "include": ["src"]
 }
 ```
 
-**`.eslintrc.json`**
-```json
-{
-    "env": {
-        "es2021": true,
-        "node": true
-    },
-    "extends": [
-        "standard-with-typescript",
-        "prettier"
-    ],
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
-    },
-    "rules": {
-    }
-}
+**`eslint.config.mjs`**
+```javascript
+import globals from "globals";
+import pluginJs from "@eslint/js";
+import tseslint from "typescript-eslint";
+import eslintConfigPrettier from "eslint-config-prettier";
+
+export default [
+  { languageOptions: { globals: globals.node } },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  eslintConfigPrettier,
+];
 ```
 
-**`package.json`** (Dependencies will reflect your wizard choices)
+**`package.json`** (Dependencies will reflect the modern wizard's choices; versions may vary)
 ```json
 {
   "name": "vscode-ext-logic",
@@ -276,14 +281,12 @@ The integration with VS Code automates this process, providing immediate feedbac
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.59.0",
-    "eslint": "^8.38.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-config-standard-with-typescript": "^34.0.1",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^15.7.0",
-    "eslint-plugin-promise": "^6.1.1",
-    "typescript": "^5.0.4"
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "globals": "^15.0.0",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.7.0"
   }
 }
 ```
@@ -335,8 +338,8 @@ node dist/index.js
     *   **Prettier is a Formatter:** Its only job is to enforce a consistent code *style*. It parses your code and re-prints it according to its strict rules, handling things like indentation, spacing, quote style, and line wrapping. It is concerned with how the code *looks*.
     *   **ESLint is a Linter:** Its job is to analyze code for *quality* and potential *bugs*. It catches programmatic errors like using a variable before it's defined, identifies anti-patterns, and flags code that doesn't follow best practices. It is concerned with how the code *works* and whether it's correct.
 
-3.  **What if `prettier` is not last in the `extends` array?**
-    The `extends` array works like a cascading stylesheet; each configuration overrides the previous one. The `eslint-config-prettier` package works by disabling ESLint's stylistic rules. If another configuration (like `standard-with-typescript`) comes *after* `prettier`, it will re-enable the very stylistic rules that `prettier` just turned off. This would lead to conflicts where Prettier formats the code one way, and ESLint then reports an error because it expects a different format. **`prettier` must always be last.**
+3.  **What if `eslintConfigPrettier` is not last in the array?**
+    The configuration array is processed in order, with later configurations overriding earlier ones. The `eslint-config-prettier` package works by disabling ESLint's stylistic rules. If another configuration (like `tseslint.configs.recommended`) came *after* `eslintConfigPrettier`, it would re-enable the very stylistic rules that `prettier` just turned off. This would lead to conflicts where Prettier formats the code one way, and ESLint then reports an error because it expects a different format. **`eslintConfigPrettier` must always be last.**
 
 4.  **Purpose of `.vscode/settings.json`?**
     This file allows you to define editor settings that are specific to the current project (workspace). By setting `"editor.formatOnSave": true` and the default formatter here, you ensure that every developer who opens this project in VS Code automatically gets the same consistent, auto-formatting behavior. If these settings were only in a developer's global user settings, you couldn't guarantee that a new team member would have the same setup. It makes the project's development experience self-contained and reproducible.
