@@ -9,16 +9,17 @@
 
 By the end of this lab, you will be able to:
 *   Install and manage Node.js using a version manager.
-*   Initialize a new project with Git version control and NPM.
-*   Install TypeScript and configure the compiler for a Node.js project.
-*   Install and configure Visual Studio Code with essential extensions for linting and formatting using the modern ESLint "Flat Config" system.
+*   Initialize a new CommonJS project with Git version control and NPM.
+*   Install TypeScript and configure the compiler for a CommonJS target.
+*   Understand why and how `jiti` is used for ESLint module interoperability.
+*   Install and configure Visual Studio Code with essential extensions for modern linting and formatting.
 *   Create and verify a "Hello, TypeScript" project that is automatically linted and formatted.
 
 ### 2. Scenario
 
-Before any professional development work can begin, a stable, consistent, and verifiable development environment must be established. This foundational setup prevents a wide range of future problems related to tool versions, code style inconsistencies, and code quality.
+Before any professional development work can begin, a stable, consistent, and verifiable development environment must be established. This foundational setup prevents a wide range of future problems related to tool versions, module system incompatibilities, code style, and code quality.
 
-In this lab, we will construct the standard development environment for our VS Code extension logic project. We will install all the necessary command-line tools and then configure VS Code to automatically enforce code quality and a consistent format, creating a seamless and professional workflow.
+In this lab, we will construct the standard development environment for a VS Code extension logic project. We will configure it as a traditional CommonJS project and use modern tooling. This will introduce the real-world scenario of using a tool (`jiti`) to bridge the gap between older and newer JavaScript module systems, a common challenge in the Node.js ecosystem.
 
 ### 3. Prerequisites
 
@@ -46,14 +47,11 @@ _**Note:** In this section, you will be provided with only the code fragments th
         nvm alias default lts
         ```
 
-    *Insight:* Using `nvm` prevents conflicts and allows you to easily switch Node.js versions for different projects.
-
     **Verification:**
     ```bash
     node -v
     npm -v
-    ```
-    The `node` version should be an LTS version (e.g., v20.x.x), and an `npm` version should be displayed.
+    ```    The `node` version should be an LTS version (e.g., v20.x.x), and an `npm` version should be displayed.
 
 2.  **Install Git and Initialize the Project**
     Git is the standard for version control. We will also create our project directory and initialize it.
@@ -83,7 +81,7 @@ _**Note:** In this section, you will be provided with only the code fragments th
     **Verification:** `tsc --version` should display version 5.x.x.
 
 4.  **Install and Configure VS Code & Extensions**
-    VS Code is our target editor. We will install it and add extensions for ESLint (code quality) and Prettier (code formatting).
+    VS Code is our target editor. We will install it and add extensions for ESLint and Prettier.
 
     *   Download and install VS Code from [https://code.visualstudio.com/](https://code.visualstudio.com/).
     *   Launch VS Code and open the Extensions view (Ctrl+Shift+X).
@@ -99,10 +97,9 @@ _**Note:** In this section, you will be provided with only the code fragments th
           "editor.defaultFormatter": "esbenp.prettier-vscode"
         }
         ```
-    *Insight:* This configuration tells VS Code to automatically format your code using Prettier every time you save a file, ensuring consistency with zero effort.
 
 5.  **Configure Project Tooling**
-    Now we will add project-specific configurations for TypeScript, ESLint, and Prettier using modern standards.
+    Now we will add project-specific configurations for TypeScript, ESLint, and Prettier.
 
     *   **TypeScript (`tsconfig.json`):** Create this file in the project root.
         ```json
@@ -113,29 +110,27 @@ _**Note:** In this section, you will be provided with only the code fragments th
             "module": "commonjs",
             "rootDir": "./src",
             "outDir": "./dist",
-            "strict": true
+            "strict": true,
+            "sourceMap": true
           },
           "include": ["src"]
         }
         ```
-        *Insight:* We've added `"include": ["src"]`. This explicitly tells TypeScript where to find our source files, which resolves a common warning.
-
     *   **ESLint (`eslint.config.mjs`):** Run the ESLint initialization wizard in your terminal.
         ```bash
         npm init @eslint/config
         ```
-        Answer the prompts precisely as follows:
+        Answer the prompts precisely as follows to simulate a CommonJS project that needs `jiti`:
         1.  *What do you want to lint?* -> Select `javascript`
         2.  *How would you like to use ESLint?* -> Select `To check syntax and find problems`
-        3.  *What type of modules does your project use?* -> Select `JavaScript modules (import/export)`
+        3.  *What type of modules does your project use?* -> Select **`CommonJS (require/exports)`**
         4.  *Which framework does your project use?* -> Select `None of these`
         5.  *Does your project use TypeScript?* -> Select `Yes`
         6.  *Where does your code run?* -> Select `Node` (deselect `Browser`)
         7.  *Which language do you want your configuration file be written in?* -> Select `JavaScript`
-        8.  *Would you like to install them now?* -> Select `Yes`
-        9.  *Which package manager do you want to use?* -> Select `npm`
-
-        *Insight:* The wizard now generates `eslint.config.mjs`, which is ESLint's new "Flat Config" format.
+        8.  *The config file will be named `eslint.config.mjs` and will require `jiti` to be loaded. Would you like to install `jiti`?* -> Select `Yes`
+        9.  *Would you like to install them now?* -> Select `Yes`
+        10. *Which package manager do you want to use?* -> Select `npm`
 
         After the wizard completes, install the Prettier config and update the generated `eslint.config.mjs` file:
         ```bash
@@ -155,8 +150,7 @@ _**Note:** In this section, you will be provided with only the code fragments th
           ...tseslint.configs.recommended,
           eslintConfigPrettier, // <-- 2. ADD AS THE LAST ELEMENT
         ];
-        ```
-    *   **Prettier (`.prettierrc.json`):** Create this file in the project root to ensure consistent formatting rules.
+        ```    *   **Prettier (`.prettierrc.json`):** Create this file in the project root.
         ```json
         // .prettierrc.json
         {
@@ -195,26 +189,24 @@ _**Note:** In this section, you will be provided with only the code fragments th
     Execute the compiled JavaScript file.
     ```bash
     node dist/index.js
-    ```
-3.  **Check the output.**
+    ```3.  **Check the output.**
     The console output should be:
     ```text
     Hello, Professional TypeScript!
     ```
 
 ### 6. Discussion
-You have successfully established a professional-grade development environment. This setup enforces a clean separation of concerns:
-*   **TypeScript (`tsc`)** is responsible for type-checking and compiling your code.
-*   **Prettier** is responsible for maintaining a consistent code format, eliminating style debates.
-*   **ESLint** is responsible for analyzing code for quality issues and potential bugs beyond what the type system can catch.
-The integration with VS Code automates this process, providing immediate feedback and ensuring every file saved is clean, consistent, and correct. This foundation is essential for efficient and scalable development.
+You have successfully established a professional-grade development environment. This setup uses modern tooling (`ESLint Flat Config`) within a traditional CommonJS project context, a common real-world scenario.
+*   **TypeScript (`tsc`)** is responsible for type-checking and compiling your code to CommonJS modules.
+*   **Prettier** is responsible for maintaining a consistent code format.
+*   **ESLint** is responsible for analyzing code for quality issues. Because its modern configuration file (`eslint.config.mjs`) is an ES Module, the **`jiti`** package was automatically installed to act as a compatibility layer, allowing the CommonJS-based ESLint process to load its ESM configuration file on-the-fly.
 
 ### 7. Questions
 1.  Why is using a version manager like `nvm` recommended over installing Node.js directly?
 2.  What is the fundamental difference between the roles of ESLint and Prettier in this setup?
-3.  What would happen if `eslintConfigPrettier` was not the last entry in the exported array in `eslint.config.mjs`?
-4.  What is the purpose of the `.vscode/settings.json` file? Why is it useful in a team environment?
-5.  We installed TypeScript globally (`npm install -g`), but the ESLint wizard added it as a project `devDependency`. Why is having a project-specific version crucial?
+3.  What specific problem does the `jiti` package solve in our configuration?
+4.  What would happen if `eslintConfigPrettier` was not the last entry in the exported array in `eslint.config.mjs`?
+5.  Why is a project-specific `devDependency` on `typescript` (installed by the ESLint wizard) crucial for team projects?
 
 ---
 
@@ -246,7 +238,8 @@ The integration with VS Code automates this process, providing immediate feedbac
     "module": "commonjs",
     "rootDir": "./src",
     "outDir": "./dist",
-    "strict": true
+    "strict": true,
+    "sourceMap": true
   },
   "include": ["src"]
 }
@@ -267,7 +260,7 @@ export default [
 ];
 ```
 
-**`package.json`** (Dependencies will reflect the modern wizard's choices; versions may vary)
+**`package.json`** (Dependencies will reflect this specific wizard path; versions may vary)
 ```json
 {
   "name": "vscode-ext-logic",
@@ -285,6 +278,7 @@ export default [
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^9.0.0",
     "globals": "^15.0.0",
+    "jiti": "^1.21.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.7.0"
   }
@@ -331,19 +325,18 @@ node dist/index.js
 
 #### 9.1. Answers to Questions
 1.  **Why `nvm`?**
-    Directly installing Node.js gives you a single, system-wide version. In a professional context, you often work on multiple projects simultaneously. One project might require an older LTS version for stability, while another might need the latest features. `nvm` allows you to install multiple versions side-by-side and switch between them on a per-shell or per-project basis, preventing version conflicts and ensuring each project uses the exact Node.js version it was built for.
+    Directly installing Node.js gives you a single, system-wide version. In a professional context, you often work on multiple projects. One project might require an older LTS version for stability, while another might need the latest features. `nvm` allows you to install multiple versions side-by-side and switch between them, preventing version conflicts and ensuring each project uses its required Node.js version.
 
 2.  **ESLint vs. Prettier Roles?**
     They have distinct, complementary roles:
-    *   **Prettier is a Formatter:** Its only job is to enforce a consistent code *style*. It parses your code and re-prints it according to its strict rules, handling things like indentation, spacing, quote style, and line wrapping. It is concerned with how the code *looks*.
-    *   **ESLint is a Linter:** Its job is to analyze code for *quality* and potential *bugs*. It catches programmatic errors like using a variable before it's defined, identifies anti-patterns, and flags code that doesn't follow best practices. It is concerned with how the code *works* and whether it's correct.
+    *   **Prettier is a Formatter:** Its only job is to enforce a consistent code *style* (indentation, spacing, quote style, etc.). It is concerned with how the code *looks*.
+    *   **ESLint is a Linter:** Its job is to analyze code for *quality* and potential *bugs* (e.g., unused variables, incorrect use of `async`). It is concerned with how the code *works*.
 
-3.  **What if `eslintConfigPrettier` is not last in the array?**
+3.  **What problem does `jiti` solve?**
+    `jiti` is an interoperability tool. Our project is a CommonJS (CJS) environment (the default for Node.js). However, the modern ESLint wizard created an `eslint.config.mjs` file, which is an ECMAScript Module (ESM). A CJS process cannot load an ESM file directly. `jiti` acts as a just-in-time transpiler, allowing the CJS-based ESLint process to load and understand our ESM configuration file on-the-fly.
+
+4.  **What if `eslintConfigPrettier` is not last in the array?**
     The configuration array is processed in order, with later configurations overriding earlier ones. The `eslint-config-prettier` package works by disabling ESLint's stylistic rules. If another configuration (like `tseslint.configs.recommended`) came *after* `eslintConfigPrettier`, it would re-enable the very stylistic rules that `prettier` just turned off. This would lead to conflicts where Prettier formats the code one way, and ESLint then reports an error because it expects a different format. **`eslintConfigPrettier` must always be last.**
 
-4.  **Purpose of `.vscode/settings.json`?**
-    This file allows you to define editor settings that are specific to the current project (workspace). By setting `"editor.formatOnSave": true` and the default formatter here, you ensure that every developer who opens this project in VS Code automatically gets the same consistent, auto-formatting behavior. If these settings were only in a developer's global user settings, you couldn't guarantee that a new team member would have the same setup. It makes the project's development experience self-contained and reproducible.
-
-5.  **Global vs. Project TypeScript?**
-    *   **Global TypeScript** provides the `tsc` command everywhere in your system's terminal. This is convenient for quick, one-off compilations or for checking the version, as we did in this lab.
-    *   **Project `devDependency` TypeScript** is crucial for team collaboration and CI/CD pipelines. It ensures that every developer on the team, and the build server, uses the **exact same version** of the TypeScript compiler for this specific project, as defined in `package.json`. This prevents "works on my machine" issues caused by subtle differences between compiler versions. The ESLint plugin also relies on this project-local version.
+5.  **Why a project-specific `typescript` dependency?**
+    While a global install is convenient for running `tsc` from anywhere, a project-local `devDependency` is crucial for team collaboration and reproducible builds. It ensures that every developer on the team, and any automated build server, uses the **exact same version** of the TypeScript compiler for this specific project, as defined in `package-lock.json`. This prevents "works on my machine" issues caused by subtle differences between compiler versions. The ESLint TypeScript plugin also relies on this project-local version.
