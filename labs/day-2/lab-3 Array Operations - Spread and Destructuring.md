@@ -242,7 +242,9 @@ console.log('All available commands:');
 console.log(allCommands);
 ```
 
-**`src/ex02.ts`**```typescript
+**`src/ex02.ts`**
+
+```typescript
 function logMessages(...messages: string[]): void {
     messages.forEach(msg => console.log(`- ${msg}`));
 }
