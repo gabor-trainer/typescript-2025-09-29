@@ -1,6 +1,5 @@
 # Lab: Array Operations - Spread and Destructuring
 
-**Module:** Day 1: Foundations & JavaScript Essentials
 **Time:** Approx. 50 minutes
 
 ---

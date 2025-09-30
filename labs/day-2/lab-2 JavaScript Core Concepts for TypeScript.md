@@ -1,6 +1,5 @@
 # Lab: JavaScript Core Concepts for TypeScript
 
-**Module:** Day 1: Foundations & JavaScript Essentials
 **Time:** Approx. 90 minutes
 
 ---
