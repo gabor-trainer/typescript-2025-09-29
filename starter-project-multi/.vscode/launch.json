@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Current TS File",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/dist/${fileBasenameNoExtension}.js",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "console": "integratedTerminal",
+      "preLaunchTask": "tsc: build"
+    }
+  ]
+}
