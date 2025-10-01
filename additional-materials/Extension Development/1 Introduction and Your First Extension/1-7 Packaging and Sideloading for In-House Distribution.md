@@ -37,7 +37,7 @@ The `.vscodeignore` file is our tool for controlling the package contents. It fu
 
 **Instructions:**
 
-1.  In your `HelloWorldNew` project, open the `.vscodeignore` file.
+1.  In your `Helloworld` project, open the `.vscodeignore` file.
 2.  Let's analyze its key directives:
     *   `src/**`: This is the most important exclusion. It prevents our raw TypeScript source code from being included. The package should only contain the compiled and bundled JavaScript.
     *   `esbuild.js`, `tsconfig.json`, `.eslintrc.json`: These are build-time and development-time configuration files. They have no function at runtime and are correctly excluded.
@@ -54,7 +54,7 @@ With `vsce` installed and our ignore file confirmed, we can now create the distr
 
 **Instructions:**
 
-1.  Ensure your extension has been compiled. From the root of `HelloWorldNew`, run:
+1.  Ensure your extension has been compiled. From the root of `Helloworld`, run:
     ```bash
     npm run compile
     ```
@@ -62,7 +62,7 @@ With `vsce` installed and our ignore file confirmed, we can now create the distr
     ```bash
     vsce package
     ```
-3.  **Observe the Output:** `vsce` will read `package.json` for metadata, apply the `.vscodeignore` rules, and create the package. The output will confirm success: `Created: helloworldnew-0.0.1.vsix (1 file(s) packaged)`.
+3.  **Observe the Output:** `vsce` will read `package.json` for metadata, apply the `.vscodeignore` rules, and create the package. The output will confirm success: `Created: helloworld-0.0.1.vsix (1 file(s) packaged)`.
 
     The resulting `.vsix` file in your project root is a complete, self-contained, and shareable artifact.
 
@@ -90,7 +90,7 @@ This method is straightforward for manual installation by an end-user.
 2.  Navigate to the Extensions view (Ctrl+Shift+X).
 3.  Click the **"Views and More Actions..."** `(...)` menu at the top of the view.
 4.  Select **Install from VSIX...**.
-5.  In the file dialog, select your generated `helloworldnew-0.0.1.vsix` file.
+5.  In the file dialog, select your generated `helloworld-0.0.1.vsix` file.
 6.  VS Code will install the extension and prompt for a reload to activate it. Click **Reload Now**.
 
 ##### **Method 2: Command-Line Installation**
@@ -105,13 +105,13 @@ This method is essential for scripting, automation, and power users. Every profe
 
     ```bash
     # For VS Code Stable
-    code --install-extension helloworldnew-0.0.1.vsix
+    code --install-extension helloworld-0.0.1.vsix
 
     # If you use VS Code Insiders, the command is:
-    code-insiders --install-extension helloworldnew-0.0.1.vsix
+    code-insiders --install-extension helloworld-0.0.1.vsix
     ```
 
-4.  **Observe the Output:** The command line will report success: `Extension 'helloworldnew-0.0.1.vsix' was successfully installed.`
+4.  **Observe the Output:** The command line will report success: `Extension 'helloworld-0.0.1.vsix' was successfully installed.`
 5.  The next time you open VS Code, the extension will be active.
 
 This command-line approach is invaluable for automated environment setup. For example, an organization can create a script that installs a standard set of in-house extensions for new developers.
@@ -119,7 +119,7 @@ This command-line approach is invaluable for automated environment setup. For ex
 ##### **Final Verification**
 
 Regardless of the installation method, you can verify success:
-*   The "HelloWorldNew" extension will now appear in the "INSTALLED" list in the Extensions view.
+*   The "Helloworld" extension will now appear in the "INSTALLED" list in the Extensions view.
 *   The "Hello World" command will be available in the Command Palette.
 
 You have now mastered the complete, end-to-end development cycle: scaffolding, coding, debugging, packaging, and installing. You possess a distributable artifact and the knowledge to deploy it both manually and programmatically.

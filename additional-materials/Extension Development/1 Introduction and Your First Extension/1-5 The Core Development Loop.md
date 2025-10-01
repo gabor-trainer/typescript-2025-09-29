@@ -49,7 +49,7 @@ In this demonstration, we will modify our extension's logic and observe the chan
 
     *   **Current Code:**
         ```typescript
-        vscode.window.showInformationMessage('Hello World from HelloWorldNew!');
+        vscode.window.showInformationMessage('Hello World from Helloworld!');
         ```
 
     *   **Modified Code:**

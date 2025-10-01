@@ -15,7 +15,7 @@ We will now walk through the process of setting a breakpoint and inspecting the 
 2.  **Set a Breakpoint:** In your main development window, open `src/extension.ts`. Navigate to the `vscode.commands.registerCommand` callback function. Place a breakpoint on the line that shows the information message by clicking in the gutter to the left of the line number. A red dot will appear, indicating an active breakpoint.
 
     ```typescript
-    let disposable = vscode.commands.registerCommand('helloworldnew.helloWorld', () => {
+    let disposable = vscode.commands.registerCommand('helloworld.helloWorld', () => {
         // The code you place here will be executed every time your command is executed
         // Display a message box to the user
         vscode.window.showInformationMessage(`Hello VS Code from ${context.extension.id} [${new Date().toLocaleTimeString()}]`); // <-- SET BREAKPOINT HERE
