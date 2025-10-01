@@ -1,6 +1,5 @@
 # Lab: Mastering the `this` Keyword
 
-**Module:** Day 1: Foundations & JavaScript Essentials
 **Time:** Approx. 60 minutes
 
 ---
