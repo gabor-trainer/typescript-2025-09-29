@@ -291,7 +291,9 @@ console.log(`Theme: ${theme}`);
 console.log(`Font: ${font}`);
 ```
 
-#### **`src/exercise-6.ts`**```typescript
+#### **`src/exercise-6.ts`**
+
+```typescript
 function logError(message: string): void {
   console.error(`ERROR: ${message}`);
 }
