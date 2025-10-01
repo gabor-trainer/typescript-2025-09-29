@@ -29,7 +29,7 @@ Our first task is purely declarative. We must inform VS Code about the new UI co
             // ... your commands from Lab 2 ...
         ],
 
-    "viewsContainers": {
+        "viewsContainers": {
             "activitybar": [
                 {
                     "id": "file-bookmarker-container",
