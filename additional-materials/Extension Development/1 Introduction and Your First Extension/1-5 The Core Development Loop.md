@@ -25,7 +25,7 @@ There are two primary methods to start this process:
 
 1.  **Integrated with the Debugger (F5):** The `launch.json` configuration is set up to run `"npm: watch"` as a `preLaunchTask`. This is the most integrated method, as it automatically starts the watch process every time you press `F5`.
 
-2.  **Manual Terminal Execution (Our Recommended Workflow):** For maximum control and visibility, Gabor and I strongly recommend starting the watch task manually in its own dedicated terminal. This decouples the build process from the debug session, which is a more robust architectural approach.
+2.  **Manual Terminal Execution (Our Recommended Workflow):** For maximum control and visibility, it is strongly recommend starting the watch task manually in its own dedicated terminal. This decouples the build process from the debug session, which is a more robust architectural approach.
 
     **Instructions for Manual Start:**
     *   Open an integrated terminal in your main development window (Ctrl+` ).
