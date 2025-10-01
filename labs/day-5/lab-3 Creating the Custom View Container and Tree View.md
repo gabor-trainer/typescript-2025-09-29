@@ -29,24 +29,22 @@ Our first task is purely declarative. We must inform VS Code about the new UI co
             // ... your commands from Lab 2 ...
         ],
 
-        // --- NEW SECTION: viewsContainers ---
-        "viewsContainers": {
+    "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "fileBookmarker.viewContainer",
+                    "id": "file-bookmarker-container",
                     "title": "File Bookmarker",
-                    "icon": "media/bookmark-icon.svg"
+                    "icon": "media/bookmark-icon.svg" 
                 }
             ]
         },
-
-        // --- NEW SECTION: views ---
         "views": {
-            "fileBookmarker.viewContainer": [
+            "file-bookmarker-container": [
                 {
                     "id": "fileBookmarker.bookmarksView",
                     "name": "Bookmarks",
-                    "type": "tree"
+                    "type": "tree",
+                    "icon": "media/bookmark-icon.svg" 
                 }
             ]
         }
