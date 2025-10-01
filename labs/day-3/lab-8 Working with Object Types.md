@@ -122,7 +122,9 @@ const events: ExtensionEvent[] = [
 // This will work because `type` is a common property.
 events.forEach(event => {
   console.log(`Event type: ${event.type}`);
-});```
+});
+
+```
 
 #### **Exercise 4: Discriminating Unions with a `switch` Statement**
 

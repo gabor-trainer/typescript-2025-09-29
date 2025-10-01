@@ -238,7 +238,9 @@ const supportedLanguages: string[] = ['typescript', 'javascript', 'python'];
 console.log('Supported Languages:', supportedLanguages);
 ```
 
-#### **`src/exercise-2.ts`**```typescript
+#### **`src/exercise-2.ts`**
+
+```typescript
 const lineNumbers = [10, 25, 42];
 
 function logLineNumbers(lines: number[]) {
