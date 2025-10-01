@@ -160,7 +160,7 @@ With our bookmarks being saved, we now need a way for the user to access them. W
 
 ```typescript
 import * as vscode from 'vscode';
-import * as path from 'path'; // Ensure path is imported
+import * as path from 'path';
 import { Bookmark } from './Bookmark';
 
 const BOOKMARKS_STATE_KEY = 'fileBookmarker.bookmarks';
@@ -169,46 +169,69 @@ export function activate(context: vscode.ExtensionContext) {
 
 	console.log('Congratulations, your extension "file-bookmarker" is now active!');
 
-    // --- Add Bookmark Command (from before) ---
+    // The entire callback function for registerCommand MUST be marked as 'async'
 	const addBookmarkCommand = vscode.commands.registerCommand('fileBookmarker.addBookmark', async () => {
-        // ... (implementation from Step 2) ...
-    });
+		const activeEditor = vscode.window.activeTextEditor;
+		if (!activeEditor) {
+			// This part should work if the async structure is correct.
+			// If it's not showing, it's a strong sign of a silent promise rejection.
+			vscode.window.showWarningMessage("Cannot add bookmark: No active file open.");
+			return;
+		}
+		const fileUri = activeEditor.document.uri;
 
-    // --- NEW: List Bookmarks Command ---
+		// The get() method is synchronous, so no 'await' is needed here.
+		const bookmarks: { uri: string }[] = context.globalState.get(BOOKMARKS_STATE_KEY, []);
+
+		const alreadyBookmarked = bookmarks.some(bookmark => bookmark.uri === fileUri.toString());
+		if (alreadyBookmarked) {
+			vscode.window.showInformationMessage(`File already bookmarked: ${path.basename(fileUri.fsPath)}`);
+			return;
+		}
+
+		bookmarks.push({ uri: fileUri.toString() });
+
+		try {
+            // The update() method returns a Thenable (Promise). It MUST be awaited.
+			await context.globalState.update(BOOKMARKS_STATE_KEY, bookmarks);
+            
+            // This line will only be reached if the update is successful.
+			vscode.window.showInformationMessage(`Bookmarked: ${path.basename(fileUri.fsPath)}`);
+
+		} catch (error) {
+            // A professional extension should always handle potential errors.
+            // If the state update fails, we must inform the user.
+            vscode.window.showErrorMessage(`Failed to save bookmark: ${error}`);
+            console.error("Failed to update globalState", error);
+        }
+	});
+
+    // The listBookmarks command is also async because it uses await for showQuickPick
     const listBookmarksCommand = vscode.commands.registerCommand('fileBookmarker.listBookmarks', async () => {
-        // 1. Retrieve the stored data.
         const bookmarkData: { uri: string }[] = context.globalState.get(BOOKMARKS_STATE_KEY, []);
-
-        // 2. If no bookmarks, show a message and exit.
         if (bookmarkData.length === 0) {
             vscode.window.showInformationMessage('No files have been bookmarked yet.');
             return;
         }
 
-        // 3. Create Bookmark instances and then QuickPickItems from them.
         const bookmarkObjects = bookmarkData.map(b => new Bookmark(vscode.Uri.parse(b.uri)));
         const quickPickItems = bookmarkObjects.map(b => ({
             label: b.label,
             description: b.description,
-            // Keep a reference to the original Bookmark object
             bookmark: b 
         }));
 
-        // 4. Show the Quick Pick to the user.
         const selectedItem = await vscode.window.showQuickPick(quickPickItems, {
             title: "Your Bookmarked Files",
             placeHolder: "Select a bookmark to open"
         });
 
-        // 5. If the user made a selection, execute the 'vscode.open' command.
         if (selectedItem) {
-            // This is the "guided" API call. We are programmatically executing a built-in
-            // VS Code command to open a file.
             await vscode.commands.executeCommand('vscode.open', selectedItem.bookmark.uri);
         }
     });
 
-	context.subscriptions.push(addBookmarkCommand, listBookmarksCommand); // Add both to subscriptions
+	context.subscriptions.push(addBookmarkCommand, listBookmarksCommand);
 }
 
 export function deactivate() {}
