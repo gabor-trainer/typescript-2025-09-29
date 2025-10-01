@@ -80,7 +80,9 @@ const command2 = {
 // Now, both commands can use the log method from their prototype.
 command1.log();
 command2.log();
-```*Insight:* Note how the `this` keyword inside the `log` method correctly refers to `command1` and `command2` respectively, because it's called *on* those objects.
+```
+
+*Insight:* Note how the `this` keyword inside the `log` method correctly refers to `command1` and `command2` respectively, because it's called *on* those objects.
 
 ---
 

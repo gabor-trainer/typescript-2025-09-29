@@ -258,7 +258,9 @@ function isLanguageSupported(languageId: string): boolean {
 }
 
 console.log(`Is 'typescript' supported? ${isLanguageSupported('typescript')}`);
-console.log(`Is 'go' supported? ${isLanguageSupported('go')}`);```
+console.log(`Is 'go' supported? ${isLanguageSupported('go')}`);
+
+```
 
 ---
 
