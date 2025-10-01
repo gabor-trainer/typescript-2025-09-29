@@ -330,7 +330,9 @@ console.log(stringArray);
 console.log(numberArray);
 ```
 
-#### **`src/exercise-5.ts`**```typescript
+#### **`src/exercise-5.ts`**
+
+```typescript
 type WithId = { id: string | number };
 
 interface ICache<T extends WithId> {

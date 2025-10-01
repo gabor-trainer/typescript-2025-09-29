@@ -284,7 +284,9 @@ const padded = pad(capitalized, 10);
 console.log(`[${padded}]`);
 ```
 
-#### **`src/exercise-4.ts`**```typescript
+#### **`src/exercise-4.ts`**
+
+```typescript
 import chalk from 'chalk';
 
 console.log(chalk.green('This message should be green!'));
