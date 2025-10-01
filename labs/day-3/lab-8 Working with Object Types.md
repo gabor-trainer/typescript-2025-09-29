@@ -292,7 +292,9 @@ const myConfig: VSCodeConfig = {
 console.log('My font size:', myConfig.editor.fontSize);
 ```
 
-#### **`src/exercise-2.ts`**```typescript
+#### **`src/exercise-2.ts`**
+
+```typescript
 type Theme = {
   name: string;
   colors?: {
