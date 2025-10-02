@@ -337,8 +337,9 @@ const commandLogger = {
 };
 
 const boundLogCallback = commandLogger.log.bind(commandLogger);
+boundLogCallback('extension.showInfo');
 
-boundLogCallback('extension.showInfo');```
+```
 
 #### **`src/exercise-5.ts`**
 ```typescript
