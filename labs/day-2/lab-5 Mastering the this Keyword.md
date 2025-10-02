@@ -354,7 +354,9 @@ const commandManager = {
   },
 };
 
-commandManager.processCommands(['cmd1', 'cmd2']);```
+commandManager.processCommands(['cmd1', 'cmd2']);
+
+```
 
 #### **`src/exercise-6.ts`**
 ```typescript
