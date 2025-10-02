@@ -336,7 +336,8 @@ class CommandHandler {
 }
 
 const handler = new CommandHandler();
-handler.run('extension.showInfo');```
+handler.run('extension.showInfo');
+```
 
 #### **`src/exercise-4.ts`**
 ```typescript

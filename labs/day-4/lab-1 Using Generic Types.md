@@ -144,7 +144,9 @@ const numberArray = wrapInArray(123);     // Type of numberArray should be numbe
 
 console.log(stringArray);
 console.log(numberArray);
-```*Insight:* TypeScript's type inference is powerful here. You don't need to write `wrapInArray<string>('hello')`; the compiler infers `T` from the argument.
+```
+
+*Insight:* TypeScript's type inference is powerful here. You don't need to write `wrapInArray<string>('hello')`; the compiler infers `T` from the argument.
 
 #### **Exercise 5: Creating a Generic Interface**
 
@@ -315,7 +317,8 @@ const userCache = new ItemCache<User>();
 userCache.add({ id: 1, name: 'Gabor' });
 
 const productCache = new ItemCache<Product>();
-productCache.add({ id: 'abc-123', price: 99.99 });```
+productCache.add({ id: 'abc-123', price: 99.99 });
+```
 
 #### **`src/exercise-4.ts`**
 ```typescript
